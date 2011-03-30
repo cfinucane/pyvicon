@@ -61,12 +61,13 @@ class mysocket:
             msg = msg + chunk
         return msg
 
-def processStream(s):
+def processStream(s,info):
     ###########################################
     #### you might want to edit this part! ####
     ###########################################
 
-    STREAMS_YOU_WANT = [32,33,34]
+    #STREAMS_YOU_WANT = [32,33,34]
+    STREAMS_YOU_WANT = [i for (i,n) in enumerate(info) if "armRightUp <a" in n]
 
     ###########################################
     ###########################################
@@ -74,7 +75,7 @@ def processStream(s):
     while KEEP_LISTENING:
         data = s.viconreceive()
         for i in STREAMS_YOU_WANT:
-            print data[i], "  ", 
+            print info[i] , ": " , data[i], "  ", 
         print
 
 
@@ -100,9 +101,14 @@ s.mysend(init)
 
 global KEEP_LISTENING
 KEEP_LISTENING = True
-listenThread = threading.Thread(target = processStream, args = (s,))
+listenThread = threading.Thread(target = processStream, args = (s,info))
 listenThread.start()
-raw_input(" *** Press ENTER to stop! ***")
+
+try:
+    raw_input(" *** Press ENTER to stop! ***")
+except KeyboardInterrupt:
+    pass
+
 KEEP_LISTENING = False
 listenThread.join()
 
