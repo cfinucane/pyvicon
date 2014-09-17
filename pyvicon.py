@@ -25,7 +25,7 @@ class ViconStreamer:
         # of what the Vicon documentation claims it is
         self._viconSend([1,0])
         print ">> Receiving stream info..."
-        self._streamNames = s._viconReceive()
+        self._streamNames = self._viconReceive()
 
     def _send(self, msg):
         totalsent = 0
@@ -89,6 +89,7 @@ class ViconStreamer:
         self._verbose = verbose
         self._streaming = True
         self.listenThread = threading.Thread(target = self._processStream)
+        self.listenThread.daemon = True
         self.listenThread.start()
 
     def stopStreams(self):
@@ -143,7 +144,7 @@ class ViconStreamer:
 
     def _processStream(self):
         while self._streaming:
-            self.data = s._viconReceive()
+            self.data = self._viconReceive()
             if self._verbose:
                 print "  ".join([self._streamNames[i] for i in self._desiredStreams])
                 for i in self._desiredStreams:
